@@ -5,29 +5,42 @@ require 'open-uri'
 $stream = open(ARGV[0])
 $in = false
 $url = ""
-$title = ""
+$title = "No title"
+$desc = "No description"
 
 while (line = $stream.gets)
     if not $in and line =~ /class="dev-description"/
         $in = true
+        next
     elsif $in
         nxt = false
         lines = line.split(/next/i)
         lines.each do |ln|
-            mt = /<a.*?href="(.*?)".*?title="(.*?)"/.match(ln)
+            mt = /<a.*?href="(.*?)"/.match(ln)
             if not mt.nil?
                 $url = mt[1]
-                $title = mt[2]
             end
         end
+        $in = false
+        next
+    end
 
-        break
+    mt = /<title>(.*?)[[:blank:]]by.*?<\/title>/.match(line)
+    if not mt.nil?
+        $title = mt[1]
+        next
+    end
+
+    mt = /<meta name="description" content="(.*?)"/.match(line)
+    if not mt.nil?
+        $desc = mt[1]
+        next
     end
 end
 
 if not $url.empty?
     puts $url
-    puts $title.split(/[[:blank:]]*by/)[0]
-    puts "No description" # To get the description, we need to download another page
+    puts $title
+    puts $desc
 end
 

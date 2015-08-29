@@ -90,15 +90,18 @@ end
 Item = Struct.new(:url, :title, :description)
 
 def nxt(platform, url)
-    # Returns the next item or nil if none
+    # Returns an item with the url of the next item and the title and description of this one
     output = `#{$platforms[platform]}/next "#{url}"`
     if output.empty?
-        nil
+        return Item.new(nil, "No Title", "No Description")
     end
     lines = output.split("\n", 3)
+    if lines[0].empty?
+        lines[0] = nil
+    end
     case lines.size
     when 1
-        return Item.new(lines[0], "No title", "No Description")
+        return Item.new(lines[0], "No Title", "No Description")
     when 2
         return Item.new(lines[0], lines[1], "No Description")
     when 3
@@ -138,10 +141,12 @@ END_OF_STRING
 
         items = Array.new
         url = cnt.cached
-        it = nxt(cnt.platform, cnt.cached)
-        while not it.nil?
+        it = Item.new(cnt.cached, "Np title", "No Description")
+        while not it.url.nil?
             items += [it]
             it = nxt(cnt.platform, it.url)
+            items.last.title = it.title
+            items.last.description = it.description
         end
         items = items.last 10
         if items.empty?
