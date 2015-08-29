@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
 require 'open-uri'
-require 'pp'
 
 $stream = open(ARGV[0])
 $in = false
@@ -13,25 +12,22 @@ while (line = $stream.gets)
         $in = true
     elsif $in
         nxt = false
-        scn = line.scan(/(next|<a.*? href="(.*?)".*? title="(.*?)".*?<\/a>)/i)
-        pp scn
-        scn.each do |mtc|
-            pp mtc
-            if mtc[0] =~ /next/i
-                nxt = true
-            else
-                $url = mtc[1]
-                m = /^(.*?) by/.match(mtc[2])
-                $title = m[1]
+        lines = line.split(/next/i)
+        lines.each do |ln|
+            mt = /<a.*?href="(.*?)".*?title="(.*?)"/.match(ln)
+            if not mt.nil?
+                $url = mt[1]
+                $title = mt[2]
             end
         end
+
         break
     end
 end
 
 if not $url.empty?
     puts $url
-    puts $title
+    puts $title.split(/[[:blank:]]*by/)[0]
     puts "No description" # To get the description, we need to download another page
 end
 
