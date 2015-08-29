@@ -1,0 +1,23 @@
+#!/usr/bin/ruby
+require 'open-uri'
+
+$stream = open(ARGV[0])
+$title = "No title"
+$description = "No description"
+
+while (line = $stream.gets)
+    match = /<title>(.*?)<\/title>/.match(line)
+    if not match.nil?
+        $title = match[1]
+        next
+    end
+
+    match = /<meta name="description" content="(.*?)"/.match(line)
+    if not match.nil?
+        $description = match[1]
+    end
+end
+
+puts $title
+puts $description
+
