@@ -1,0 +1,25 @@
+#!/usr/bin/ruby
+
+require 'open-uri'
+
+$stream = open(ARGV[0])
+$url = ""
+$title = "No title"
+
+while (line = $stream.gets)
+    mt = /<a class="next-button" href="(.*?)">Next<\/a>/.match(line)
+    if not mt.nil?
+        $url = mt[1]
+        next
+    end
+
+    mt = /<li class="timestamp"><a[^>]*>(.*?)<\/a><\/li>/.match(line)
+    if not mt.nil?
+        $title = mt[1]
+        next
+    end
+end
+
+puts $url
+puts $title
+

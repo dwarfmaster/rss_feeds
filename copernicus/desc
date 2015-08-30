@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+cat << EOF
+Copernicus
+A comic about magicians and fairies and everything in between
+EOF
+
