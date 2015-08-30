@@ -88,13 +88,19 @@ end
 # Utility functions
 Item = Struct.new(:url, :title, :description)
 
+# Clean invalid UTF-8 characters from string
+def clean(str)
+    st = str.encode('UTF-16', 'UTF-8', :invalid => :replace, :replace => '')
+    return st.encode('UTF-8', 'UTF-16')
+end
+
 def nxt(platform, url)
     # Returns an item with the url of the next item and the title and description of this one
     output = `#{$platforms[platform]}/next "#{url}"`
     if output.empty?
         return Item.new(nil, "No Title", "No Description")
     end
-    lines = output.split("\n", 3)
+    lines = clean(output).split("\n", 3)
     if lines[0].empty?
         lines[0] = nil
     end
@@ -132,15 +138,15 @@ $contents.each do |cnt|
         file.puts <<END_OF_STRING
 <rss version="2.0">
 <channel>
-<title>#{ds[0]}</title>
-<link>#{cnt.url}</link>
-<description>#{ds[1]}</description>
+<title>#{clean(ds[0])}</title>
+<link>#{clean(cnt.url)}</link>
+<description>#{clean(ds[1])}</description>
 
 END_OF_STRING
 
         items = Array.new
         url = cnt.cached
-        it = Item.new(cnt.cached, "Np title", "No Description")
+        it = Item.new(cnt.cached, "No title", "No Description")
         while not it.url.nil?
             items += [it]
             it = nxt(cnt.platform, it.url)
@@ -158,9 +164,9 @@ END_OF_STRING
         items.reverse_each do |item| # Last item first
             file.puts <<END_OF_STRING
 <item>
-    <title>#{item.title}</title>
-    <link>#{item.url}</link>
-    <description>#{item.description}\nLink: #{item.url}</description>
+    <title>#{clean(item.title)}</title>
+    <link>#{clean(item.url)}</link>
+    <description>#{clean(item.description)}\nLink: #{item.url}</description>
 </item>
 
 END_OF_STRING
@@ -171,8 +177,8 @@ END_OF_STRING
 </rss>
 END_OF_STRING
         file.close
-    rescue => err
-        puts "Warning, could not write feed for #{cnt.url} : #{err}"
+    #rescue => err
+    #    puts "Warning, could not write feed for #{cnt.url} : #{err}"
     end
 end
 
