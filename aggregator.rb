@@ -155,8 +155,8 @@ END_OF_STRING
         if items.size == 10
             cnt.cached = items.first.url
         end
-        items.each do |item|
-        file.puts <<END_OF_STRING
+        items.reverse_each do |item| # Last item first
+            file.puts <<END_OF_STRING
 <item>
     <title>#{item.title}</title>
     <link>#{item.url}</link>
