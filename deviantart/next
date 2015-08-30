@@ -38,9 +38,7 @@ while (line = $stream.gets)
     end
 end
 
-if not $url.empty?
-    puts $url
-    puts $title
-    puts $desc
-end
+puts $url
+puts $title
+puts $desc
 
