@@ -1,8 +1,7 @@
 #!/usr/bin/ruby
 require 'pp'
 
-# $outdir = "#{ENV["HOME"]}/feeds/"
-$outdir = "feeds/"
+$outdir = "#{ENV["HOME"]}/feeds/"
 
 # Path to platform scripts dirs
 if ENV["XDG_DATA_DIRS"].nil?
@@ -12,7 +11,7 @@ if ENV["XDG_DATA_DIRS"].nil?
     ]
 else
     $scripts = ENV["XDG_DATA_DIRS"].split(":").map! do |str|
-        str += "rss_platforms"
+        str += "/rss_platforms"
     end
 end
 
