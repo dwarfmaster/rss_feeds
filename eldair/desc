@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+cat << EOF
+Children of Eldair
+A story about three young girls in a fantasy world.
+EOF
+

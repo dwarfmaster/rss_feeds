@@ -1,0 +1,33 @@
+#!/usr/bin/ruby
+
+require 'open-uri'
+
+$stream = open(ARGV[0])
+$url = ""
+$title = "No title"
+$desc = "No description"
+
+while (line = $stream.gets)
+    mt = /<a href="(.*?)"> <img src=".[^"]*" alt="next page" \/> <\/a>/.match(line)
+    if not mt.nil?
+        $url = "http://eldair.com/#{mt[1]}"
+        next
+    end
+
+    mt = /<title>[^-]*[[:blank:]]*(.*?)[[:blank:]]*<\/title>/.match(line)
+    if not mt.nil?
+        $title = mt[1]
+        next
+    end
+
+    mt = /<p class="h4">(.*?)<\/p>/.match(line)
+    if not mt.nil?
+        $desc = mt[1].sub("<p class=\"h4\">", "\n")
+        next
+    end
+end
+
+puts $url
+puts $title
+puts $desc
+
